@@ -1,2 +1,98 @@
 ---
-# tasks file for paulrentschler.uwsgi
+# Install and configure uWSGI server
+
+
+##
+# Install uWSGI
+##
+- name: install uWSGI (without emperor)
+  ansible.builtin.package:
+    name: "uwsgi"
+    state: present
+    update_cache: yes
+  when: "not uwsgi_install_emperor|bool"
+  become: yes
+
+- name: install uWSGI (emperor)
+  ansible.builtin.package:
+    name: "uwsgi-emperor"
+    state: present
+    update_cache: yes
+  when: "uwsgi_install_emperor|bool"
+  become: yes
+
+- name: install Python 2 plugin
+  ansible.builtin.package:
+    name: "uwsgi-plugin-python"
+    state: present
+    update_cache: yes
+  when: "uwsgi_use_python2|bool"
+  become: yes
+
+- name: install Python 3 plugin
+  ansible.builtin.package:
+    name: "uwsgi-plugin-python3"
+    state: present
+    update_cache: yes
+  when: "uwsgi_use_python3|bool"
+  become: yes
+
+
+
+##
+# Configure uWSGI
+##
+- name: set the log directory permissions
+  ansible.builtin.file:
+    path: "/var/log/uwsgi"
+    state: directory
+    owner: "{{ uwsgi_user }}"
+    group: "{{ devops_group|default('adm') }}"
+    mode: "0775"
+  become: yes
+
+- block:
+    # - name: configure uWSGI emperor to run with systemd
+    #   ansible.builtin.template:
+    #     src: "systemd.service.j2"
+    #     dest: "/etc/systemd/system/uwsgi.service"
+    #     owner: "root"
+    #     group: "root"
+    #     mode: "0644"
+    #   # register: _uwsgi_systemd_config
+    #   become: yes
+
+    - name: configure emperor
+      ansible.builtin.template:
+        src: "emperor.ini.j2"
+        dest: "/etc/uwsgi-emperor/emperor.ini"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      become: yes
+
+    - name: rename vassals directory
+      ansible.builtin.command:
+        argv:
+          - mv
+          - /etc/uwsgi-emperor/vassals
+          - "{{ uwsgi_apps_path }}"
+        creates: "{{ uwsgi_apps_path }}"
+        removes: "/etc/uwsgi-emperor/vassals"
+      when: "uwsgi_apps_path != '/etc/uwsgi-emperor/vassals'"
+      become: yes
+
+    # - name: reload systemd config files
+    #   systemd:
+    #     daemon_reload: yes
+    #   when: _uwsgi_systemd_config is changed
+    #   become: yes
+
+    - name: start uwsgi service
+      ansible.builtin.service:
+        name: uwsgi-emperor
+        enabled: yes
+        state: started
+      become: yes
+  when: uwsgi_install_emperor|bool
+

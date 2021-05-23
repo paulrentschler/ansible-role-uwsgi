@@ -1,2 +1,37 @@
 ---
-# defaults file for paulrentschler.uwsgi
+# defaults for uWSGI related variables
+
+
+# install uWSGI in emperor mode
+uwsgi_install_emperor: yes
+
+# Use Python3 by default
+uwsgi_use_python2: no
+uwsgi_use_python3: yes
+
+# the user and group uWSGI should run as
+uwsgi_user: www-data
+uwsgi_group: www-data
+
+
+# try to automatically load plugins when unknown options are found
+uwsgi_autoload: "true"
+
+# enable master process
+uwsgi_master: "true"
+
+# spawn the specified number of workers/processes
+uwsgi_workers: 2
+
+# automatically kill workers if master dies (can be dangerous for availability)
+uwsgi_no_orphans: "true"
+
+# prefix logs with date or a strftime string
+uwsgi_log_date: "true"
+
+# path to store the apps config files
+uwsgi_apps_path: /etc/uwsgi-emperor/apps
+
+# trigger chain reload if the app config file is modified/touched
+uwsgi_touch_chain_reload: "false"
+
