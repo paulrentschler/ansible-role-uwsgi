@@ -1,38 +1,106 @@
-Role Name
-=========
+paulrentschler.uWSGI
+====================
 
-A brief description of the role goes here.
+[![MIT licensed][mit-badge]][mit-link]
+
+Installs and configures the uWSGI daemon on Ubuntu Linux machines.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+None.
+
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The following variables are available with defaults defined in `defaults/main.yml`:
+
+Install uWSGI to run in "emperor" mode.
+
+    uwsgi_install_emperor: yes
+
+Specify the version of Python that will be used (uses Python3 by default).
+
+    uwsgi_use_python2: no
+    uwsgi_use_python3: yes
+
+**NOTE:** Ubuntu 18.04 is the last version that supports using Python 2 with uWSGI.
+
+
+Specify the user and group that the uWSGI daemon runs as.
+
+    uwsgi_user: www-data
+    uwsgi_group: www-data
+
+
+Try to automatically load plugins when unknown options are found.
+
+    uwsgi_autoload: "true"
+
+Enable the master process.
+
+    uwsgi_master: "true"
+
+Indicate how many workers/processes to spawn.
+
+    uwsgi_workers: 2
+
+Automatically kill workers if master dies (can be dangerous for availability).
+
+    uwsgi_no_orphans: "true"
+
+Prefix logs with date (can also specify a strftime string).
+
+    uwsgi_log_date: "true"
+
+Path to store the app config files.
+
+    uwsgi_apps_path: /etc/uwsgi-emperor/apps
+
+Trigger chain reload if the app config file is modified/touched.
+
+    uwsgi_touch_chain_reload: "false"
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None.
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Simple version:
 
-    - hosts: servers
+    - hosts: all
       roles:
-         - { role: username.rolename, x: 42 }
+        - paulrentschler.uwsgi
+
+
+Use Python 2 and increase the number of workers:
+
+    - hosts: all
+      roles:
+         - role: paulrentschler.ntp
+           vars:
+             uwsgi_use_python2: yes
+             uwsgi_use_python3: no
+             uwsgi_workers: 5
+
 
 License
 -------
 
-BSD
+[MIT][mit-link]
+
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Created by Paul Rentschler in 2021.
+
+
+[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[mit-link]: https://github.com/paulrentschler/ansible-role-uwsgi/blob/master/LICENSE
