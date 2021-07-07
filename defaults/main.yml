@@ -14,6 +14,9 @@ uwsgi_user: www-data
 uwsgi_group: www-data
 
 
+# path for the unix socket files
+uwsgi_socket_path: "/tmp"
+
 # try to automatically load plugins when unknown options are found
 uwsgi_autoload: "true"
 

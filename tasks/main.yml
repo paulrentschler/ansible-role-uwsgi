@@ -51,6 +51,16 @@
     mode: "0775"
   become: yes
 
+- name: create the socket directory
+  ansible.builtin.file:
+    path: "{{ uwsgi_socket_path }}"
+    state: directory
+    owner: "{{ uwsgi_user }}"
+    group: "{{ uwsgi_group|default(devops_group)|default('adm') }}"
+    mode: "0775"
+  when: uwsgi_socket_path != "/tmp"
+  become: yes
+
 - block:
     # - name: configure uWSGI emperor to run with systemd
     #   ansible.builtin.template:

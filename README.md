@@ -34,6 +34,10 @@ Specify the user and group that the uWSGI daemon runs as.
     uwsgi_group: www-data
 
 
+Specify the path for the unix socket files. uWSGI seems to work better with Apache when this path is not the default `/tmp` but rather something like `/var/lib/uwsgi`. It is best to set this variable more globally so that other roles can use it when defining the Apache virtual host configuration.
+
+    uwsgi_socket_path: "/tmp"
+
 Try to automatically load plugins when unknown options are found.
 
     uwsgi_autoload: "true"
