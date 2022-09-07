@@ -62,15 +62,23 @@
   become: yes
 
 - block:
-    # - name: configure uWSGI emperor to run with systemd
-    #   ansible.builtin.template:
-    #     src: "systemd.service.j2"
-    #     dest: "/etc/systemd/system/uwsgi.service"
-    #     owner: "root"
-    #     group: "root"
-    #     mode: "0644"
-    #   # register: _uwsgi_systemd_config
-    #   become: yes
+    - name: disable the default uWSGI emperor init.d configuration
+      ansible.builtin.file:
+        path: "/etc/init.d/uwsgi-emperor"
+        mode: "0644"
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= 20
+      become: yes
+
+    - name: configure uWSGI emperor to run with systemd
+      ansible.builtin.template:
+        src: "systemd.service.j2"
+        dest: "/etc/systemd/system/uwsgi.service"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= 20
+      register: _uwsgi_systemd_config
+      become: yes
 
     - name: configure emperor
       ansible.builtin.template:
@@ -92,15 +100,15 @@
       when: "uwsgi_apps_path != '/etc/uwsgi-emperor/vassals'"
       become: yes
 
-    # - name: reload systemd config files
-    #   systemd:
-    #     daemon_reload: yes
-    #   when: _uwsgi_systemd_config is changed
-    #   become: yes
+    - name: reload systemd config files
+      systemd:
+        daemon_reload: yes
+      when: _uwsgi_systemd_config is changed and ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= 20
+      become: yes
 
     - name: start uwsgi service
       ansible.builtin.service:
-        name: uwsgi-emperor
+        name: "{{ 'uwsgi.service' if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= 20 else 'uwsgi-emperor' }}"
         enabled: yes
         state: started
       become: yes
