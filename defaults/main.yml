@@ -10,8 +10,8 @@ uwsgi_use_python2: no
 uwsgi_use_python3: yes
 
 # the user and group uWSGI should run as
-uwsgi_user: www-data
-uwsgi_group: www-data
+uwsgi_user: "{{ apache_user|default('www-data') }}"
+uwsgi_group: "{{ apache_group|default('www-data') }}"
 
 
 # path for the unix socket files
