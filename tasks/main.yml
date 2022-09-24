@@ -12,7 +12,7 @@
 ##
 - name: install uWSGI (without emperor)
   ansible.builtin.package:
-    name: "uwsgi"
+    name: "{{ uwsgi_nonemperor_package }}"
     state: present
     update_cache: yes
   when: "not uwsgi_install_emperor|bool"
@@ -20,7 +20,7 @@
 
 - name: install uWSGI (emperor)
   ansible.builtin.package:
-    name: "uwsgi-emperor"
+    name: "{{ uwsgi_emperor_package }}"
     state: present
     update_cache: yes
   when: "uwsgi_install_emperor|bool"
@@ -28,7 +28,7 @@
 
 - name: install Python 2 plugin
   ansible.builtin.package:
-    name: "uwsgi-plugin-python"
+    name: "uwsgi-plugin-python{% if ansible_os_family == 'RedHat' %}2{% end if %}"
     state: present
     update_cache: yes
   when: "uwsgi_use_python2|bool"
@@ -88,7 +88,7 @@
     - name: configure emperor
       ansible.builtin.template:
         src: "emperor.ini.j2"
-        dest: "/etc/uwsgi-emperor/emperor.ini"
+        dest: "{{ uwsgi_emperor_config }}"
         owner: "root"
         group: "root"
         mode: "0644"
@@ -102,7 +102,17 @@
           - "{{ uwsgi_apps_path }}"
         creates: "{{ uwsgi_apps_path }}"
         removes: "/etc/uwsgi-emperor/vassals"
-      when: "uwsgi_apps_path != '/etc/uwsgi-emperor/vassals'"
+      when: "ansible_distribution == 'Ubuntu' and uwsgi_apps_path != '/etc/uwsgi-emperor/vassals'"
+      become: yes
+
+    - name: create the PID directory (RedHat)
+      ansible.builtin.file:
+        path: "/run/uwsgi"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: ansible_os_family == 'RedHat'
       become: yes
 
     - name: reload systemd config files
@@ -113,7 +123,7 @@
 
     - name: start uwsgi service
       ansible.builtin.service:
-        name: "{{ 'uwsgi.service' if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 20 else 'uwsgi-emperor' }}"
+        name: "{{ 'uwsgi-emperor' if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 20 else 'uwsgi.service' }}"
         enabled: yes
         state: started
       become: yes
