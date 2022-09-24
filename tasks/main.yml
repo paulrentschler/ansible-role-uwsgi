@@ -117,5 +117,13 @@
         enabled: yes
         state: started
       become: yes
+
+    - name: set the log file ownership
+      ansible.builtin.file:
+        path: "{{ uwsgi_log_path }}"
+        owner: root
+        group: "{{ devops_group|default('root') }}"
+        mode: "0660"
+      become: yes
   when: uwsgi_install_emperor|bool
 

@@ -40,5 +40,8 @@ touch-chain-reload = "{{ uwsgi_touch_chain_reload }}"
 strict = true
 
 # specify the log file location
-logto = /var/log/uwsgi/emperor.log
+logto = {{ uwsgi_log_path }}
+
+# log file permissions
+logfile-chmod = 660
 

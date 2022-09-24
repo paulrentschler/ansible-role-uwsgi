@@ -33,7 +33,10 @@ uwsgi_no_orphans: "true"
 uwsgi_log_date: "true"
 
 # path to store the apps config files
-uwsgi_apps_path: /etc/uwsgi-emperor/apps
+uwsgi_apps_path: "/etc/uwsgi-emperor/apps"
+
+# path to store the log files
+uwsgi_log_path: "/var/log/uwsgi/emperor.log"
 
 # trigger chain reload if the app config file is modified/touched
 uwsgi_touch_chain_reload: "false"
