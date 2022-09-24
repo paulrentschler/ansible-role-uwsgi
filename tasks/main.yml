@@ -2,6 +2,11 @@
 # Install and configure uWSGI server
 
 
+- name: add OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+    - always
+
 ##
 # Install uWSGI
 ##

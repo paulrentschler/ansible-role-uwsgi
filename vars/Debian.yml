@@ -1,0 +1,14 @@
+---
+# uWSGI variables for Debian-based systems
+
+
+# installation packages
+uwsgi_nonemperor_package: "uwsgi"
+uwsgi_emperor_package: "uwsgi-emperor"
+
+# configuration file
+uwsgi_emperor_config: "/etc/uwsgi-emperor/emperor.ini"
+
+# path to store the apps config files
+uwsgi_apps_path: "/etc/uwsgi-emperor/apps"
+
