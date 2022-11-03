@@ -34,7 +34,7 @@ gid = {{ uwsgi_group }}
 emperor = {{ uwsgi_apps_path }}
 
 # trigger chain reload if the app config file is modified/touched
-touch-chain-reload = "{{ uwsgi_touch_chain_reload }}"
+touch-chain-reload = {{ uwsgi_touch_chain_reload }}
 
 # enable strict mode (placeholder cannot be used)
 strict = true
