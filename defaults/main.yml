@@ -6,8 +6,8 @@
 uwsgi_install_emperor: yes
 
 # Use Python3 by default
-uwsgi_use_python2: no
-uwsgi_use_python3: yes
+# uwsgi_use_python2: no
+# uwsgi_use_python3: yes
 
 # the user and group uWSGI should run as
 uwsgi_user: "{{ apache_user|default('www-data') }}"

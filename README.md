@@ -20,13 +20,6 @@ Install uWSGI to run in "emperor" mode.
 
     uwsgi_install_emperor: yes
 
-Specify the version of Python that will be used (uses Python3 by default).
-
-    uwsgi_use_python2: no
-    uwsgi_use_python3: yes
-
-**NOTE:** Ubuntu 18.04 is the last version that supports using Python 2 with uWSGI.
-
 
 Specify the user and group that the uWSGI daemon runs as.
 

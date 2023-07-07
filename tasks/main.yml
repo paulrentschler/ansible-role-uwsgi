@@ -26,20 +26,20 @@
   when: "uwsgi_install_emperor|bool"
   become: yes
 
-- name: install Python 2 plugin
-  ansible.builtin.package:
-    name: "uwsgi-plugin-python{% if ansible_os_family == 'RedHat' %}2{% end if %}"
-    state: present
-    update_cache: yes
-  when: "uwsgi_use_python2|bool"
-  become: yes
+# - name: install Python 2 plugin
+#   ansible.builtin.package:
+#     name: "uwsgi-plugin-python{% if ansible_os_family == 'RedHat' %}2{% end if %}"
+#     state: present
+#     update_cache: yes
+#   when: "uwsgi_use_python2|bool"
+#   become: yes
 
 - name: install Python 3 plugin
   ansible.builtin.package:
     name: "uwsgi-plugin-python3"
     state: present
     update_cache: yes
-  when: "uwsgi_use_python3|bool"
+  # when: "uwsgi_use_python3|bool"
   become: yes
 
 
